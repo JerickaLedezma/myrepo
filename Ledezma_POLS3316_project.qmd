@@ -1,0 +1,105 @@
+---
+title: "Semester Project"
+author: "Jericka Ledezma"
+format: 
+        html:
+                self-contained: true
+                code-fold: true
+                code-summary: "Show the code"
+editor: source
+---
+
+## Introduction
+
+- First paragraph: Introduction - Introduce your topic. If you have a formal or informal research question, you can start with it. (Note: you are not expected to answer the research question this semester.) 
+  - Explain why the topic is important or interesting in one or two sentences. Describe what you hope to learn from the data. Did any other reading influence your thinking or interest (cite appropriately)? (1 / 2 point)
+
+This analysis focuses on the relationship between civil society and democracy measures. The inclusion of both Civil Society measures and democracy measures from VDem provides a comprehensive view of the factors that contribute to the functioning of democratic systems. By examining the relationship between the two sets of measures, I hope to gain insights into how civil society influences the quality of democracy. This topic is important as it can help us understand the dynamics between civic participation and democratic governance. Additionally, it can contribute to the existing literature on the role of civil society in promoting democratic values. The decision to include the VDem democracy measures was influenced by a previous article by Norris, Pippa, and Carole J. Stone (2011) titled "Social Capital and Public Support for Democracy." This article explores the relationship between social capital and citizens' attitudes towards democracy, finding that higher levels of social capital are associated with greater support for democratic principles.
+
+- Second paragraph: The dataset - Describe the dataset. What is its source? What data does it contain generally? What is the unit of observation? How was the data derived (experiment, survey, observational data, etc.)? (2 points)
+
+The dataset used in this analysis is sourced from the Varieties of Democracy (V-Dem) Institute. It contains civil society measures from the previous dataset used, as well as five measures of democracy from the V-Dem dataset. The unit of observation in the dataset is countries, with multiple observations for each country based on different years. The data is derived from an extensive and ongoing collection of expert surveys, ensuring a comprehensive and reliable assessment of civil society and democracy measures across countries and time periods.
+
+  - Third paragraph: The variables - Describe each variable of interest. Two variables is a minimum, with two to three being ideal. If you have more than 4, only describe the four most important. For each variable include: type of variable, mean and median, standard deviation, a statement about the distribution, and any other information you think is especially relevant or interesting. (2 points)
+  
+The first variable of interest is v2x_partipdem, which measures citizen participation in democracy. It is a continuous variable ranging from 0 to 1. The mean and median values represent the average participation level, while the standard deviation measures variation. The second variable, v2x_polyarchy, measures the level of polyarchy in countries. It is also continuous, with higher values indicating greater polyarchy. Analyzing the distribution of both variables can provide insights into citizen participation and the quality of democratic governance.
+  
+## Summary Statistices of the variables
+
+```{r}
+# load the data
+dem_data <- read.csv("csdem_data.csv")
+head(dem_data)
+# summary statistics of Y variable
+#v2x_partipdem as the x variable and v2x_polyarchy as the y variable
+summary_y <- summary(dem_data$v2x_polyarchy)
+# variance and standard deviation of Y variable
+var_y <- var(dem_data$v2x_polyarchy)
+sd_y <- sd(dem_data$v2x_polyarchy)
+# summary statistics of X variable
+summary_x <- summary(dem_data$v2x_partipdem)
+# variance and standard deviation of X variable
+var_x <- var(dem_data$v2x_polyarchy)
+sd_x <- sd(dem_data$v2x_polyarchy)
+
+
+```
+
+
+## Histograms of the variables  
+
+```{r}
+
+# Histogram of Y variable
+hist_data_y <- hist(dem_data$v2x_polyarchy, main = "Histogram of Y variable", xlab = "v2x_polyarchy")
+# Histogram of X variable
+hist_data_X <- hist(dem_data$v2x_partipdem, main = "Histogram of X variable", xlab = "v2x_partipdem")
+# Histogram of additional variables if needed
+
+#correlation and covariance
+covariance <- cov(dem_data$v2x_partipdem, dem_data$v2x_polyarchy)
+# Assuming you have two variables x and y:
+correlation <- cor(dem_data$v2x_partipdem, dem_data$v2x_polyarchy)
+
+```
+
+  
+## The Relationship between the variables
+
+  - Fourth paragraph: The relationship between variables - Describe the relationship between the variables you think are the most likely explanatory and dependent (x and y) variables. What is their correlation? Their covariance? (2 points)
+
+Based on the results of the stargazed object model created for my dataset variable y v2x_polyarhy is the dependant variable and v2x_partidem is the explanatory variable. This relationship beceomes more evident once histograms for both variables were plotted. While a histogram for this type of data may not the best measure of a definitive relationship in the y histogram there is a noticable increase in the 0.8 to 0.9 bin that is reflected as a dip in the x variable histogram. A correlation of 0.97 indicates a strong positive linear relationship between the variables. It suggests that as one variable increases, the other tends to increase as well, and vice versa. The covariance of 0.049 indicates the extent to which the variables vary together. However, it doesn't provide information on the strength or direction of the relationship between the variables.
+
+## Regression Results
+
+```{r message=FALSE, warning=FALSE}
+
+# OLS regression model
+#v2x_partipdem as the x variable and v2x_polyarchy as the y variable
+model_object1 <- lm(v2x_polyarchy ~ v2x_partipdem, data = dem_data)
+
+# stargazer table of model
+library(stargazer)
+stargazer(model_object1, type = "text")
+
+# plot of model results with confidence intervals
+library(ggplot2)
+#v2x_partipdem as the x variable and v2x_polyarchy as the y variable
+ggplot(data = dem_data, aes(x = v2x_partipdem, y = v2x_polyarchy)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(title = "Confidence Interval for the Slope", subtitle = "95% Confidence Interval")
+
+```
+
+  
+  
+  - Fifth paragraph: Regression results - Describe the OLS regression results. What is the intercept? What is the coefficient for each explanatory variable? Interpret this coefficient in terms of a change in Y. Is the coefficient significant and at what level? Is the total model significant and how much does it explain? (2 points)
+
+The OLS regression results indicate a significant relationship between the variables. The intercept is 0.098, representing the expected value of the dependent variable at zero for the independent variable. The coefficient for the independent variable is 1.252, showing that a one-unit increase in the independent variable is associated with a 1.252 unit increase in the dependent variable. This coefficient is highly significant (p < 0.01), demonstrating a strong relationship. The overall model has a high goodness of fit (R-squared = 0.941), suggesting that about 94.1% of the variance in the dependent variable can be explained by the independent variable. These findings provide strong evidence for the positive influence of the independent variable on the dependent variable.
+
+## Conclusion  
+  
+  - Sixth paragraph: Conclusion - Summarize what was interesting, compelling, surprising, etc. What new questions were raised? If you did more with this topic what new data would help? (1 / 2 point)
+
+In conclusion, this analysis found a strong positive relationship between civil society measures of citizen participation in democracy and democracy measures of polyarchy. The findings suggest that higher levels of citizen participation in democracy are associated with greater levels of polyarchy and thus, quality of democratic governance. These results align with previous research on the role of civil society in promoting democratic values. The analysis raises new questions about the specific mechanisms through which civil society influences democratic governance and the potential for causality in this relationship. To further explore these questions, additional data on the specific activities and organizations within civil society would be helpful. Additionally, longitudinal data could provide insights into the dynamics of this relationship over time.
